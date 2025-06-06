@@ -1,0 +1,9 @@
+reviews/
+metadata/
+rsc15/
+*Propuesta*
+*GRU*
+**/*.txt
+**/*.tsv
+.ipynb_checkpoints/
+**/__pycache__/
