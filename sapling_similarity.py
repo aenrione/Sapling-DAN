@@ -4,9 +4,9 @@ class SaplingSimilarity:
     """Sapling Similarity class for computing similarity matrices based on user-item interactions."""
 
     def __init__(self, user_item_matrix: np.ndarray, gamma: float = 0.5):
-        self.user_item_matrix = user_item_matrix
+        self.user_item_matrix = user_item_matrix.astype(np.float64)
         self.gamma = gamma
-        
+
     def sapling(self, projection: int = 0) -> np.ndarray:
         """Similarity algorithm for projection-based similarity matrix.
 
