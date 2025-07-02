@@ -28,9 +28,9 @@ class Pipeline:
         sapling_similarity = SaplingSimilarity(pipeline_matrix, self.gamma)
         users_similarity = sapling_similarity.sapling(projection=0)
         items_similarity = sapling_similarity.sapling(projection=1)
-        
+
         recommendation_matrix = sapling_similarity.recommendation_matrix(users_similarity, items_similarity)
-        
+
         return recommendation_matrix
 
 if __name__ == "__main__":
@@ -38,7 +38,7 @@ if __name__ == "__main__":
                        [0, 0, 1, 1, 0],
                        [1, 0, 0, 1, 0],
                        [0, 1, 0, 1, 1]])
-    
+
     config = {
         'reg_p': 20,
         'alpha': 0.2,
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         'xi': 0.3
     }
     gamma = 0.5
-    
+
     pipeline = Pipeline(matrix, config, gamma)
     recommendation_matrix = pipeline.run(normalization="RLAE")
     print("Recommendation Matrix:\n", recommendation_matrix)
