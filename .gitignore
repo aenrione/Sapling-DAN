@@ -7,3 +7,6 @@ rsc15/
 **/*.tsv
 .ipynb_checkpoints/
 **/__pycache__/
+
+amazon_reviews_books/
+amazon_metadata_books/
