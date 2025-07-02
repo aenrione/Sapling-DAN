@@ -3,7 +3,7 @@ import numpy as np
 from datasets import load_from_disk
 
 class Loader:
-    def __init__(self, dataset_name="amazon_reviews_books", subset_name="full", number_of_samples=100):
+    def __init__(self, dataset_name="amazon_reviews_books", subset_name="full", number_of_samples=100, reviews_column="rating", asin_column="asin", user_id_column="user_id"):
         self.dataset_name = dataset_name
         self.subset_name = subset_name
         self.number_of_samples = number_of_samples
@@ -13,13 +13,16 @@ class Loader:
         self.item_set = set()
         self.user_list_path = f"{self.dataset_name}_{self.subset_name}_user_list.txt"
         self.item_list_path = f"{self.dataset_name}_{self.subset_name}_item_list.txt"
-        self.user_positive_reviews_path = f"{self.dataset_name}_{self.subset_name}_user_positive_reviews.txt"
+        self.user_positive_reviews_path = f"{self.dataset_name}_{self.subset_name}_user_positive_reviews.txt" 
+        self.reviews_column = reviews_column
+        self.asin_column = asin_column
+        self.user_id_column = user_id_column
 
     def create_user_positive_reviews(self):
         for index, review in enumerate(self.reviews):
-            if review["rating"] >= 3:
-                user_id = review["user_id"]
-                asin = review["asin"]
+            if float(review[self.reviews_column]) >= 3:
+                user_id = review[self.user_id_column]
+                asin = review[self.asin_column]
                 self.user_positive_reviews[user_id].append(asin)
                 self.user_set.add(user_id)
                 self.item_set.add(asin)
