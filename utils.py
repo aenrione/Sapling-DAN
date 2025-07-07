@@ -61,6 +61,7 @@ def train_test_split(matrix, test_ratio=0.2, seed=42):
 
     return train, test
 
+
 def run_experiments(loader, config, gamma, alpha, k_values):
     loader.create_user_positive_reviews()
     full_matrix = loader.create_user_item_matrix()
@@ -69,11 +70,18 @@ def run_experiments(loader, config, gamma, alpha, k_values):
     # Lista de experimentos (modelo, normalización)
     experiments = [
         ("pipeline", "RLAE"),
+        ("pipeline", "LAE"),
+        ("pipeline", "EASE"),
         ("combine", "EASE"),
+        ("combine", "RLAE"),
+        ("combine", "LAE"),
         ("regularization", "LAE"),
+        ("regularization", "EASE"),
+        ("regularization", "RLAE"),
         ("dan", "RLAE"),
-        ("sapling", None),
+        ("dan", "LAE"),
         ("dan", "EASE"),
+        ("sapling", None),
     ]
     results_list = []
     for model_name, normalization in experiments:
@@ -111,10 +119,79 @@ def run_experiments(loader, config, gamma, alpha, k_values):
                 "model": model_name,
                 "normalization": normalization,
                 "k": k,
-                "precision": results[f"precision@{k}"],
-                "recall": results[f"recall@{k}"],
-                "ndcg": results[f"ndcg@{k}"],
-                "diversity": results[f"diversity@{k}"],
-                "novelty": results[f"novelty@{k}"]
+                "precision": results["precision@{}".format(k)],
+                "recall": results["recall@{}".format(k)],
+                "ndcg": results["ndcg@{}".format(k)],
+                "diversity": results["diversity@{}".format(k)],
+                "novelty": results["novelty@{}".format(k)],
             })
+    return results_list
+
+
+def sensitivity_analysis(loader):
+    import numpy as np
+
+    # Default config and gamma values
+    default_config = {
+        'reg_p': 20,
+        'alpha': 0.2,
+        'beta': 0.3,
+        'drop_p': 0.5,
+        'xi': 0.3,
+        'eta': 10
+    }
+    default_gamma = 0.5
+    k_values = [5, 10, 20]
+
+    loader.create_user_positive_reviews()
+    full_matrix = loader.create_user_item_matrix()
+    train, test = train_test_split(full_matrix)
+
+    # Only test one parameter at a time, keeping others fixed
+    param_grid = {
+        'alpha': np.arange(0, 1.1, 0.1),
+        'reg_p': [5, 10, 20],
+        'beta': [0.1, 0.3, 0.5],
+        'drop_p': [0.3, 0.5, 0.7],
+        'xi': [0.1, 0.3, 0.5],
+        'eta': [5, 10, 20]
+    }
+
+    base_config = default_config.copy()
+    results_list = []
+
+    for param_name, param_values in param_grid.items():
+        for val in param_values:
+            config_run = base_config.copy()
+            config_run[param_name] = val
+            # For alpha, also pass as argument to Combine
+            alpha_for_model = config_run.get('alpha', 0.5)
+            model = Combine(train, config_run, default_gamma, alpha_for_model)
+            predictions = model.run("LAE")
+
+            for k in k_values:
+                results = evaluate(predictions, train, test, k=k)
+                print(f"Metrics @ {k} for model combine ({param_name}={val}): {results}")
+                # Record all config values for traceability
+                result_entry = {
+                    "dataset": loader.dataset_name,
+                    "model": "combine",
+                    "normalization": "LAE",
+                    "k": k,
+                    "alpha": config_run.get('alpha', None),
+                    "reg_p": config_run.get('reg_p', None),
+                    "beta": config_run.get('beta', None),
+                    "drop_p": config_run.get('drop_p', None),
+                    "xi": config_run.get('xi', None),
+                    "eta": config_run.get('eta', None),
+                    "varied_param": param_name,
+                    "varied_value": val,
+                    "precision": results["precision@{}".format(k)],
+                    "recall": results["recall@{}".format(k)],
+                    "ndcg": results["ndcg@{}".format(k)],
+                    "diversity": results["diversity@{}".format(k)],
+                    "novelty": results["novelty@{}".format(k)],
+                }
+                results_list.append(result_entry)
+
     return results_list

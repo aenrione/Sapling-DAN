@@ -12,3 +12,5 @@ amazon_reviews_books/
 amazon_metadata_books/
 yelp_reviews/
 amazon_products/
+movielens/
+!recommendations_output.txt

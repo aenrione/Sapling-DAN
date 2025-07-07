@@ -1,0 +1,39 @@
+=== Amazon Book Recommendation System ===
+Using Combine + EASE Model
+
+Dataset: 434 users, 4585 items
+User: 0
+
+User Profile:
+  - God Gave Us You (1578563232)
+
+Recent Reviews:
+  - God Gave Us You | "Great gift and value!!" (Rating: 5.0/5)
+  - God Gave Us You | "A FAVORITE book" (Rating: 5.0/5)
+  - God Gave Us You | "Beautiful Illustrations" (Rating: 5.0/5)
+
+Top 5 Recommendations:
+--------------------------------------------------
+1. The Red Sea Rules: 10 God-Given Strategies for Difficult Times
+   Score: 0.0830
+   Description: About the Author
+
+2. Blood Money (Paperback) - Common
+   Score: 0.0830
+   Description: No description available
+
+3. Blood Money
+   Score: 0.0830
+   Description: No description available
+
+4. Forgiving What You Can't Forget: Discover How to Move On, Make Peace with Painful Memories, and Create a Life That’s Beautiful Again
+   Score: 0.0830
+   Description: About the Author
+
+5. First 100 Words: A Padded Board Book
+   Score: -0.0000
+   Description: Review
+
+Model: Combine + EASE
+Configuration: {'reg_p': 20, 'alpha': 0.2, 'beta': 0.3, 'drop_p': 0.5, 'xi': 0.3, 'eta': 10}
+Total time: 14.0s
