@@ -54,13 +54,14 @@ if __name__ == "__main__":
                        [0, 0, 1, 1, 0],
                        [1, 0, 0, 1, 0],
                        [0, 1, 0, 1, 1]])
-    
+    user = np.array([1, 0, 1, 0, 0])
+
     gamma = 0.5
-    
+
     sapling_similarity = SaplingSimilarity(matrix, gamma)
     users_similarity = sapling_similarity.sapling(projection=0)
     items_similarity = sapling_similarity.sapling(projection=1)
-    
+
     recommendation_matrix = sapling_similarity.recommendation_matrix(users_similarity, items_similarity)
     print("Recommendation Matrix:\n", recommendation_matrix)
     print("User Similarity Matrix:\n", users_similarity)
